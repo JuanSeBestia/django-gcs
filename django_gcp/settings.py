@@ -11,6 +11,29 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+
+from google.oauth2 import service_account
+
+# reading .env file
+environ.Env.read_env()
+
+# configure default paramaters
+env = environ.Env(
+    DEBUG=(bool, False),
+    SECRET_KEY=(str, '-rb6o(e-kml%mxr&2iszre70b%oyytyj=*hurvi9x@idp40)%%'),
+    ALLOWED_HOSTS=(list, []),
+    SERVER_NAME=(str, ''),
+
+    GS_BUCKET_NAME=(str, ''),
+    GS_MEDIA_BUCKET_NAME=(str, ''),
+    GS_STATIC_BUCKET_NAME=(str, ''),
+    GS_PROJECT_ID=(str, ''),
+    GS_CREDENTIALS=(str, ''),
+    GS_AUTO_CREATE_BUCKET=(bool, False),
+    GS_AUTO_CREATE_ACL=(str, ''),
+    GS_DEFAULT_ACL=(str, ''),
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +43,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-rb6o(e-kml%mxr&2iszre70b%oyytyj=*hurvi9x@idp40)%%'
+SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = []
+SERVER_NAME = env.str('SERVER_NAME')
 
 
 # Application definition
@@ -118,6 +142,46 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
+STATIC_ROOT = 'static-root/'
+
 MEDIA_URL = 'media-url/'
 MEDIA_ROOT = 'media-root/'
+
+## GOOGLE STORAGE
+GS_BUCKET_NAME = env.str("GS_BUCKET_NAME")
+
+## CUSTOM PROVIDER
+# GS_MEDIA_BUCKET_NAME = env.str("GS_MEDIA_BUCKET_NAME")
+# GS_STATIC_BUCKET_NAME = env.str("GS_STATIC_BUCKET_NAME")
+
+GS_PROJECT_ID = env.str("GS_PROJECT_ID")
+
+GS_LOCATION= 'location'
+
+GS_CREDENTIALS = env.str("GS_CREDENTIALS")
+if GS_CREDENTIALS:
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(GS_CREDENTIALS)
+
+GS_AUTO_CREATE_BUCKET = env.str("GS_AUTO_CREATE_BUCKET")
+GS_AUTO_CREATE_ACL = env.str("GS_AUTO_CREATE_ACL")
+GS_DEFAULT_ACL = env.str("GS_DEFAULT_ACL")
+
+if GS_CREDENTIALS and GS_PROJECT_ID and GS_BUCKET_NAME:
+    ### Change default backend to write/read file objects
+    DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+    THUMBNAIL_DEFAULT_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+
+    ### Change default backend to collect statics
+    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    
+    # DEFAULT_FILE_STORAGE = "django_gcp.gcs.GoogleCloudMediaStorage"
+    # THUMBNAIL_DEFAULT_STORAGE = "django_gcp.gcs.GoogleCloudMediaStorage"
+
+    # ### Change default backend to collect statics
+    # STATICFILES_STORAGE = 'django_gcp.gcs.GoogleCloudStaticStorage'
+    
+    # STATIC_URL = 'https://storage.googleapis.com/{}/'.format(GS_STATIC_BUCKET_NAME)
+    # MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_MEDIA_BUCKET_NAME)
+    
+    
