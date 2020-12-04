@@ -18,8 +18,6 @@ class GoogleCloudMediaStorage(GoogleCloudStorage):
     """GoogleCloudStorage suitable for Django's Media files."""
 
     def __init__(self, *args, **kwargs):
-        if not settings.MEDIA_URL:
-            raise Exception('MEDIA_URL has not been configured')
         kwargs['bucket_name'] = settings.GS_MEDIA_BUCKET_NAME
         super(GoogleCloudMediaStorage, self).__init__(*args, **kwargs)
 
@@ -28,7 +26,6 @@ class GoogleCloudStaticStorage(GoogleCloudStorage):
     """GoogleCloudStorage suitable for Django's Static files"""
 
     def __init__(self, *args, **kwargs):
-        if not settings.STATIC_URL:
-            raise Exception('STATIC_URL has not been configured')
         kwargs['bucket_name'] = settings.GS_STATIC_BUCKET_NAME
+        kwargs['default_acl'] = 'publicRead'
         super(GoogleCloudStaticStorage, self).__init__(*args, **kwargs)

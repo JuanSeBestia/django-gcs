@@ -152,8 +152,8 @@ MEDIA_ROOT = 'media-root/'
 GS_BUCKET_NAME = env.str("GS_BUCKET_NAME")
 
 ## CUSTOM PROVIDER
-# GS_MEDIA_BUCKET_NAME = env.str("GS_MEDIA_BUCKET_NAME")
-# GS_STATIC_BUCKET_NAME = env.str("GS_STATIC_BUCKET_NAME")
+GS_MEDIA_BUCKET_NAME = env.str("GS_MEDIA_BUCKET_NAME")
+GS_STATIC_BUCKET_NAME = env.str("GS_STATIC_BUCKET_NAME")
 
 GS_PROJECT_ID = env.str("GS_PROJECT_ID")
 
@@ -169,19 +169,14 @@ GS_DEFAULT_ACL = env.str("GS_DEFAULT_ACL")
 
 if GS_CREDENTIALS and GS_PROJECT_ID and GS_BUCKET_NAME:
     ### Change default backend to write/read file objects
-    DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-    THUMBNAIL_DEFAULT_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-
-    ### Change default backend to collect statics
-    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-    
-    # DEFAULT_FILE_STORAGE = "django_gcp.gcs.GoogleCloudMediaStorage"
-    # THUMBNAIL_DEFAULT_STORAGE = "django_gcp.gcs.GoogleCloudMediaStorage"
+    # DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+    # THUMBNAIL_DEFAULT_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 
     # ### Change default backend to collect statics
-    # STATICFILES_STORAGE = 'django_gcp.gcs.GoogleCloudStaticStorage'
+    # STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
     
-    # STATIC_URL = 'https://storage.googleapis.com/{}/'.format(GS_STATIC_BUCKET_NAME)
-    # MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_MEDIA_BUCKET_NAME)
-    
-    
+    DEFAULT_FILE_STORAGE = "django_gcp.gcs.GoogleCloudMediaStorage"
+    THUMBNAIL_DEFAULT_STORAGE = "django_gcp.gcs.GoogleCloudMediaStorage"
+
+    ### Change default backend to collect statics
+    STATICFILES_STORAGE = 'django_gcp.gcs.GoogleCloudStaticStorage'
