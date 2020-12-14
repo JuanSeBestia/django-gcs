@@ -5,3 +5,6 @@ pyvenv.cfg
 
 db.sqlite3
 media-root/
+campus_key.json
+django_gcp/.env
+django_gcp/__pycache__/
